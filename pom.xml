@@ -39,7 +39,7 @@
     <dependency>
         <groupId>com.google.inject</groupId>
         <artifactId>guice</artifactId>
-        <version>3.0</version>
+        <version>4.0</version>
         <scope>compile</scope>
     </dependency>
     <dependency>
@@ -89,6 +89,7 @@
         <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>build-helper-maven-plugin</artifactId>
+            <version>1.10</version>
             <executions>
                 <execution>
                     <phase>generate-sources</phase>

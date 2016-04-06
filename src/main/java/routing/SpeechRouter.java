@@ -27,6 +27,7 @@ import com.google.inject.Singleton;
 import routing.attributes.FilterFor;
 import routing.attributes.Slot;
 import routing.attributes.Utterances;
+import routing.providers.RequestContextProvider;
 
 @Singleton
 public class SpeechRouter {
@@ -83,6 +84,9 @@ public class SpeechRouter {
 		}
 		
 		String possibleUtterance = getPossibleUtterance(intentName, slotValues);
+		RequestContextProvider contextProvider = this.injector.getInstance(RequestContextProvider.class);
+		contextProvider.setPossibleUtterance(possibleUtterance);
+		contextProvider.setIntentName(intentName);
 		RequestContext requestContext = new RequestContext(possibleUtterance, intentName);
 		controller.setRequestContext(requestContext);
 		

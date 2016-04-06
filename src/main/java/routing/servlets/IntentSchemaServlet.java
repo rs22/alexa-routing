@@ -1,6 +1,8 @@
 package routing.servlets;
 
 import com.google.gson.Gson;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import routing.SpeechRouter;
 
 import javax.servlet.ServletException;
@@ -10,12 +12,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-/**
- * Created by I848587 on 4/5/2016.
- */
+@Singleton
 public class IntentSchemaServlet extends HttpServlet {
     private final SpeechRouter router;
 
+    @Inject
     public IntentSchemaServlet(SpeechRouter router) {
         super();
         this.router = router;

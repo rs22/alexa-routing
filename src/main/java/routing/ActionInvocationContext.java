@@ -55,8 +55,10 @@ public class ActionInvocationContext {
 	}
 	
 	public String getIntentName(List<String> slots) throws Exception {
+		String capitalizedActionName = actionName.substring(0, 1).toUpperCase() + actionName.substring(1);
+
 		if (slots.isEmpty()) {
-			return String.format("%1$s%2$sIntent", controllerName, actionName);
+			return String.format("%1$s%2$sIntent", controllerName, capitalizedActionName);
 		} else {
 			// Make sure all slots actually exist
 			for (String slot : slots) {
@@ -64,7 +66,7 @@ public class ActionInvocationContext {
 					throw new Exception("Couldn't resolve slot " + slot + " that was used in utterance");
 			}
 			
-			return String.format("%1$s%2$sWith%3$sIntent", controllerName, actionName, String.join("And", slots));
+			return String.format("%1$s%2$sWith%3$sIntent", controllerName, capitalizedActionName, String.join("And", slots));
 		}
 	}
 }
