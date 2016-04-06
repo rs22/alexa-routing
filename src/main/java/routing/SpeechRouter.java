@@ -246,8 +246,8 @@ public class SpeechRouter {
 		return result;
 	}
 
-	public static SpeechRouter create(Injector injector) throws Exception {
-		Reflections reflections = new Reflections("com.sap.c4c.alexa.controllers");
+	public static SpeechRouter create(Injector injector, String controllerPackage) throws Exception {
+		Reflections reflections = new Reflections(controllerPackage);
 		Set<Class<? extends AlexaController>> controllers = reflections.getSubTypesOf(AlexaController.class);
 		
 		List<String> sampleUtterances = new LinkedList<String>();

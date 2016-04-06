@@ -13,7 +13,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-import rottentomatoes.RottenTomatoesSpeechlet;
+import routing.servlets.RoutingSpeechlet;
 import routing.SpeechRouter;
 import routing.servlets.IntentSchemaServlet;
 import routing.servlets.SampleUtterancesServlet;
@@ -46,17 +46,17 @@ public class Main {
         Injector injector = Guice.createInjector(new ServletModule(), new AbstractModule() {
              @Override
              protected void configure() {
-
+                // You could bind your dependencies here...
              }
          });
 
-        final SpeechRouter router = SpeechRouter.create(injector);
+        final SpeechRouter router = SpeechRouter.create(injector, "rottentomatoes");
 
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
         context.addFilter(GuiceFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
         server.setHandler(context);
-        context.addServlet(new ServletHolder(createServlet(new RottenTomatoesSpeechlet(router))), "/rotten-tomatoes");
+        context.addServlet(new ServletHolder(createServlet(new RoutingSpeechlet(router))), "/rotten-tomatoes");
         context.addServlet(new ServletHolder(new SampleUtterancesServlet(router)), "/sample-utterances");
         context.addServlet(new ServletHolder(new IntentSchemaServlet(router)), "/intent-schema");
         server.start();

@@ -1,4 +1,4 @@
-package rottentomatoes.controllers;
+package rottentomatoes;
 
 import routing.AlexaController;
 import routing.AlexaResponse;
@@ -8,7 +8,7 @@ import routing.attributes.Utterances;
 public class RottenTomatoesController extends AlexaController {
 
     @Utterances({
-        "what are the top {one;two;three;four;five;ten;fifteen;twenty|Count} movies?"
+        "what are the top {one;two;three;four;five;ten;fifteen;twenty|Count} movies"
     })
     @Slot({"Count"})
     public AlexaResponse TopMovies(int count) {

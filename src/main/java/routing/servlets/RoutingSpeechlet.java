@@ -1,4 +1,4 @@
-package rottentomatoes;
+package routing.servlets;
 
 import com.google.inject.Inject;
 
@@ -16,10 +16,10 @@ import com.amazon.speech.ui.Reprompt;
 import com.amazon.speech.ui.SimpleCard;
 import routing.SpeechRouter;
 
-public class RottenTomatoesSpeechlet implements Speechlet {
+public class RoutingSpeechlet implements Speechlet {
     private final SpeechRouter router;
 
-    public RottenTomatoesSpeechlet(SpeechRouter router) {
+    public RoutingSpeechlet(SpeechRouter router) {
     
         this.router = router;
     }
