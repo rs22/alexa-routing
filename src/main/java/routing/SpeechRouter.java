@@ -66,7 +66,7 @@ public class SpeechRouter {
 		// Parse slot values
 		Map<String, Object> slotValues = new HashMap<String, Object>();
 		for (Entry<String, Class<?>> slot : action.getSlots().entrySet()) {
-			if (intent.getSlot(slot.getKey()) == null) {
+			if (intent.getSlot(slot.getKey()) == null || intent.getSlot(slot.getKey()).getValue() == null) {
 				// Supply default values for Integer parameters
 				if (slot.getValue() == int.class)
 					slotValues.put(slot.getKey(), 0);
@@ -241,9 +241,11 @@ public class SpeechRouter {
 		if (intentUtterance == null)
 			return null;
 
-		String result = getUtteranceWithSlotValues(intentUtterance, slotValues).substring(intentName.length() + 1);
-		// Capitalize first letter:
-		return result;
+		String utteranceWithSlotValues = getUtteranceWithSlotValues(intentUtterance, slotValues);
+		if (utteranceWithSlotValues != null && utteranceWithSlotValues.length() >= intentName.length())
+			utteranceWithSlotValues = utteranceWithSlotValues.substring(intentName.length() + 1);
+
+		return utteranceWithSlotValues;
 	}
 
 	public static SpeechRouter create(Injector injector, String controllerPackage) throws Exception {

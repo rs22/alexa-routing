@@ -30,7 +30,7 @@ public class Main {
       System.setProperty(Sdk.DISABLE_REQUEST_SIGNATURE_CHECK_SYSTEM_PROPERTY, "true");
 
         String envPort = System.getenv("PORT");
-        int port = envPort.isEmpty() ? 8000 : Integer.valueOf(envPort);
+        int port = envPort == null || envPort.isEmpty() ? 8000 : Integer.valueOf(envPort);
 
 
         // Configure server and its associated servlets
