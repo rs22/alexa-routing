@@ -15,6 +15,8 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import rottentomatoes.RottenTomatoesSpeechlet;
 import routing.SpeechRouter;
+import routing.servlets.IntentSchemaServlet;
+import routing.servlets.SampleUtterancesServlet;
 
 import javax.servlet.DispatcherType;
 import java.util.EnumSet;
@@ -41,14 +43,12 @@ public class Main {
         connectors[0] = serverConnector;
         server.setConnectors(connectors);
 
-        Injector injector = Guice.createInjector(new ServletModule());
-        
-        // , new AbstractModule() {
-        //     @Override
-        //     protected void configure() {
+        Injector injector = Guice.createInjector(new ServletModule(), new AbstractModule() {
+             @Override
+             protected void configure() {
 
-        //     }
-        // }
+             }
+         });
 
         final SpeechRouter router = SpeechRouter.create(injector);
 
@@ -56,7 +56,9 @@ public class Main {
         context.setContextPath("/");
         context.addFilter(GuiceFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
         server.setHandler(context);
-        context.addServlet(new ServletHolder(createServlet(new RottenTomatoesSpeechlet(router))), "/rottentomatoes");
+        context.addServlet(new ServletHolder(createServlet(new RottenTomatoesSpeechlet(router))), "/rotten-tomatoes");
+        context.addServlet(new ServletHolder(new SampleUtterancesServlet(router)), "/sample-utterances");
+        context.addServlet(new ServletHolder(new IntentSchemaServlet(router)), "/intent-schema");
         server.start();
         server.join();
   }
