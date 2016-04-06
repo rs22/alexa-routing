@@ -29,6 +29,7 @@
     </dependency>
   </dependencies>
   <build>
+    <sourceDirectory>sample</sourceDirectory>
     <plugins>
       <plugin>
     <groupId>org.apache.maven.plugins</groupId>
