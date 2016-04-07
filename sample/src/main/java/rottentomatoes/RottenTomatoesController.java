@@ -44,10 +44,10 @@ public class RottenTomatoesController extends AlexaController {
         StringBuilder response = new StringBuilder();
         response.append("The top movies are ");
         for (int i = 0; i < count - 1; i++) {
-            response.append(movies[i]).append(", ");
+            response.append(movies[i].title).append(", ");
         }
 
-        response.append("and ").append(movies[count - 1]);
+        response.append("and ").append(movies[count - 1].title);
         return endSessionResponse(response.toString());
     }
 
