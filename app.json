@@ -1,0 +1,6 @@
+{
+  "name": "Alexa Routing Example",
+  "description": "An example app showcasing how to use Controllers to build Amazon Alexa Skills",
+  "image": "heroku/java",
+  "addons": [ ]
+}
