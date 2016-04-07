@@ -48,8 +48,8 @@ public class RottenTomatoesController extends AlexaController {
     }
 
     @Utterances({
+        "what are the top selling movies",
         "what are the top {one;two;three;four;five;ten;fifteen;twenty|Count} movies",
-        "what are the top selling movies"
     })
     @Slot({"Count"})
     public AlexaResponse topMovies(int count) {
@@ -70,7 +70,9 @@ public class RottenTomatoesController extends AlexaController {
     }
 
     @Utterances({
-        "which actor appears in the most movies"
+        "who appears in the most movies",
+        "which actor appears in the most movies",
+        "who plays in the most of the top {ten;twenty;thirty;fifty;hundred|Count} movies",
     })
     public AlexaResponse topActors() {
         Map<String, Integer> actorAppearances = new HashMap<String, Integer>();
