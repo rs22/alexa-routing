@@ -46,6 +46,7 @@ public class Main {
                                 try {
                                     return SpeechRouter.create(injector, "rottentomatoes");
                                 } catch (Exception e) {
+                                    e.printStackTrace();
                                     return null;
                                 }
                             }

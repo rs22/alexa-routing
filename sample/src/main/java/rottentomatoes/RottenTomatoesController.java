@@ -29,7 +29,7 @@ public class RottenTomatoesController extends AlexaController {
         this.session = session;
     }
 
-    @FilterFor({"TopMovies"})
+    @FilterFor({"topMovies", "topActors"})
     @Slot({"Count"})
     public void LoadMovies(int count, FilterContext context) {
         // 0 means the user didn't specify a number (he's allowed to do that)
