@@ -67,7 +67,10 @@ public class SpeechRouter {
 		// Parse slot values
 		Map<String, Object> slotValues = new HashMap<String, Object>();
 		for (Entry<String, Class<?>> slot : action.getSlots().entrySet()) {
-			if (intent.getSlot(slot.getKey()) == null || intent.getSlot(slot.getKey()).getValue() == null) {
+			if (intent.getSlot(slot.getKey()) == null ||
+					intent.getSlot(slot.getKey()).getValue() == null ||
+					intent.getSlot(slot.getKey()).getValue().equals("?")) {
+				
 				// Supply default values for Integer parameters
 				if (slot.getValue() == int.class)
 					slotValues.put(slot.getKey(), 0);
