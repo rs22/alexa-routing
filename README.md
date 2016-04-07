@@ -1,40 +1,35 @@
-# java-getting-started
+# Alexa Routing for Java
 
-A barebones Java app, which can easily be deployed to Heroku.
-
-This application supports the [Getting Started with Java on Heroku](https://devcenter.heroku.com/articles/getting-started-with-java) article - check it out.
+This repository contains a set of classes that allow you to use 'Controllers' to build Skills for Amazon Alexa. This is a runnable example that can be deployed to Heroku.
 
 [![Deploy to Heroku](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
 
-## Running Locally
+The `SpeechRouter` takes care of generating the intent schema and sample utterances to speed up your iterations. Moreover you can define each intent in one place, including utterances, slots and the implementation, so everything stays in sync.
 
-Make sure you have Java and Maven installed.  Also, install the [Heroku Toolbelt](https://toolbelt.heroku.com/).
+This is how it looks like:
 
-```sh
-$ git clone https://github.com/heroku/java-getting-started.git
-$ cd java-getting-started
-$ mvn install
-$ heroku local:start
+```java
+public class ExampleController extends AlexaController {
+
+    @Utterances({
+        "what is the sum of {one;two;three;four;five|First} and {one;two;three;four;five|Second}",
+        "what is {one;two;three;four;five|First} plus {one;two;three;four;five|Second}"
+    })
+    // This maps the slots from the utterances to the method parameters (so the order is important)
+    @Slot({"First", "Second"}) 
+    public AlexaResponse addTwoNumbers(int first, int second) {
+        return endSessionResponse(String.format("The sum of %1$d and %2$d is %3$d.", 
+            first, second, first + second));
+    }
+}
 ```
 
-Your app should now be running on [localhost:5000](http://localhost:5000/).
+For a more complete example please have a look at the `RottenTomatoesController` class (this even supports Rails-like Action Filters).
 
-If you're going to use a database, ensure you have a local `.env` file that reads something like this:
+**Sample Deployment**
 
-```
-DATABASE_URL=postgres://localhost:5432/java_database_name
-```
+https://alexa-routing-example.herokuapp.com/
 
-## Deploying to Heroku
-
-```sh
-$ heroku create
-$ git push heroku master
-$ heroku open
-```
-
-## Documentation
-
-For more information about using Java on Heroku, see these Dev Center articles:
-
-- [Java on Heroku](https://devcenter.heroku.com/categories/java)
+- Skill Endpoint: [https://alexa-routing-example.herokuapp.com/rotten-tomatoes](https://alexa-routing-example.herokuapp.com/rotten-tomatoes)
+- Sample Utterances: [https://alexa-routing-example.herokuapp.com/sample-utterances](https://alexa-routing-example.herokuapp.com/sample-utterances)
+- Intent Schema: [https://alexa-routing-example.herokuapp.com/intent-schema](https://alexa-routing-example.herokuapp.com/intent-schema)
