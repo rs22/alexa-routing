@@ -76,7 +76,8 @@ public class SpeechRouter {
 			}
 				
 			if (slot.getValue() == String.class) {
-				slotValues.put(slot.getKey(), intent.getSlot(slot.getKey()).getValue());
+				// Amazon only provides lowercase slot values, so normalize them here for debugging
+				slotValues.put(slot.getKey(), intent.getSlot(slot.getKey()).getValue().toLowerCase());
 			} else if (slot.getValue() == int.class) {
 				slotValues.put(slot.getKey(), Integer.parseInt(intent.getSlot(slot.getKey()).getValue()));
 			}

@@ -13,8 +13,8 @@ import routing.providers.AlexaSessionProvider;
 import routing.providers.RequestContextProvider;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class RottenTomatoesController extends AlexaController {
 
@@ -29,12 +29,12 @@ public class RottenTomatoesController extends AlexaController {
         this.session = session;
     }
 
-    @FilterFor({"topMovies", "topActors"})
+    @FilterFor({"topMovies", "topActors", "movieWithActor"})
     @Slot({"Count"})
     public void loadMovies(int count, FilterContext context) {
         // 0 means the user didn't specify a number (he's allowed to do that)
         if (count == 0) {
-            count = 5;
+            count = 10;
         }
 
         String moviesUri = "http://api.rottentomatoes.com/api/public/v1.0/lists/movies/box_office.json?limit=" + Integer.toString(count);
@@ -59,14 +59,10 @@ public class RottenTomatoesController extends AlexaController {
             return endSessionResponse("The top movie is " + this.movies[0].title);
         }
 
-        StringBuilder response = new StringBuilder();
-        response.append("The top movies are ");
-        for (int i = 0; i < this.movies.length - 1; i++) {
-            response.append(this.movies[i].title).append(", ");
-        }
+        return endSessionResponse("The top movies are " +
+                joinWordsWithCommasAndAnd(
+                        Arrays.asList(this.movies).stream().map(m -> m.title).collect(Collectors.toList())));
 
-        response.append("and ").append(this.movies[this.movies.length - 1].title);
-        return endSessionResponse(response.toString());
     }
 
     @Utterances({
@@ -75,24 +71,9 @@ public class RottenTomatoesController extends AlexaController {
         "who plays in the most of the top {ten;twenty;thirty;fifty;hundred|Count} movies",
     })
     public AlexaResponse topActors() {
-        Map<String, Integer> actorAppearances = new HashMap<>();
-
-        for (Movie movie : this.movies) {
-            if (movie.abridged_cast == null)
-                continue;
-
-            for (Actor actor : movie.abridged_cast) {
-                Integer appearances = 0;
-
-                if (actorAppearances.containsKey(actor.name))
-                    appearances = actorAppearances.get(actor.name);
-
-                appearances += 1;
-                actorAppearances.put(actor.name, appearances);
-            }
-        }
-
+        Map<String, List<String>> actorAppearances = getActorAppearances(this.movies);
         String[] actors = actorAppearances.keySet().toArray(new String[actorAppearances.keySet().size()]);
+
         if (actors.length == 0) {
             return endSessionResponse("Apparently there's not a single actor in the top movies.");
         }
@@ -101,7 +82,7 @@ public class RottenTomatoesController extends AlexaController {
         Integer previousBest = 0;
 
         for (int i = 1; i < actors.length; i++) {
-            int appearances = actorAppearances.get(actors[i]);
+            int appearances = actorAppearances.get(actors[i]).size();
             if (appearances > previousBest) {
                 mostAppearances = actors[i];
                 previousBest = appearances;
@@ -113,6 +94,76 @@ public class RottenTomatoesController extends AlexaController {
         }
 
         return endSessionResponse(mostAppearances + " played in " + previousBest + " movies.");
+    }
+
+    @Utterances({
+        "which is the {Bradley Cooper;Jennifer Lawrence;Ben Affleck;Amy Adams|Actor} movie"
+    })
+    @Slot({"Actor"})
+    public AlexaResponse movieWithActor(String actor) {
+        if (actor == null) {
+            return endSessionResponse("I don't know which actor you mean.");
+        }
+
+        Map<String, List<String>> actorAppearances = getActorAppearances(this.movies);
+        String[] actors = actorAppearances.keySet().toArray(new String[actorAppearances.keySet().size()]);
+
+        for (int i = 0; i < actors.length; i++) {
+            if (actor.equals(actors[i].toLowerCase())) {
+                List<String> appearances = actorAppearances.get(actors[i]);
+                return endSessionResponse(capitalizeWords(actor) + " appears in " + joinWordsWithCommasAndAnd(appearances));
+            }
+        }
+
+        return endSessionResponse("Sorry, I don't know a movie with this actor");
+    }
+
+    private String capitalizeWords(String text) {
+        String[] words = text.split(" ");
+        for (int i = 0; i < words.length; i++) {
+            if (words[i].isEmpty())
+                continue;
+
+            words[i] = words[i].substring(0, 1).toUpperCase() + words[i].substring(1);
+        }
+
+        return String.join(" ", words);
+    }
+
+    private String joinWordsWithCommasAndAnd(List<String> words) {
+        StringBuilder result = new StringBuilder();
+        int wc = words.size();
+
+        if (wc == 0)
+            return "";
+        if (wc == 1)
+            return words.get(0);
+
+        for (int i = 0; i < wc - 2; i++) {
+            result.append(words.get(i)).append(", ");
+        }
+        result.append(words.get(wc - 2)).append(" and ").append(words.get(wc - 1));
+        return result.toString();
+    }
+
+    private Map<String, List<String>> getActorAppearances(Movie[] movies) {
+        Map<String, List<String>> actorAppearances = new HashMap<>();
+
+        for (Movie movie : movies) {
+            if (movie.abridged_cast == null)
+                continue;
+
+            for (Actor actor : movie.abridged_cast) {
+                List<String> appearances = new ArrayList<String>();
+
+                if (actorAppearances.containsKey(actor.name))
+                    appearances = actorAppearances.get(actor.name);
+
+                appearances.add(movie.title);
+                actorAppearances.put(actor.name, appearances);
+            }
+        }
+        return actorAppearances;
     }
 
     private Movie[] getMovies(String url) {
