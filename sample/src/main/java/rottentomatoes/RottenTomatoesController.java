@@ -31,7 +31,7 @@ public class RottenTomatoesController extends AlexaController {
 
     @FilterFor({"topMovies", "topActors"})
     @Slot({"Count"})
-    public void LoadMovies(int count, FilterContext context) {
+    public void loadMovies(int count, FilterContext context) {
         // 0 means the user didn't specify a number (he's allowed to do that)
         if (count == 0) {
             count = 5;
@@ -65,7 +65,7 @@ public class RottenTomatoesController extends AlexaController {
             response.append(this.movies[i].title).append(", ");
         }
 
-        response.append("and ").append(this.movies[count - 1].title);
+        response.append("and ").append(this.movies[this.movies.length - 1].title);
         return endSessionResponse(response.toString());
     }
 
@@ -75,7 +75,7 @@ public class RottenTomatoesController extends AlexaController {
         "who plays in the most of the top {ten;twenty;thirty;fifty;hundred|Count} movies",
     })
     public AlexaResponse topActors() {
-        Map<String, Integer> actorAppearances = new HashMap<String, Integer>();
+        Map<String, Integer> actorAppearances = new HashMap<>();
 
         for (Movie movie : this.movies) {
             if (movie.abridged_cast == null)
@@ -92,7 +92,7 @@ public class RottenTomatoesController extends AlexaController {
             }
         }
 
-        String[] actors = actorAppearances.values().toArray(new String[0]);
+        String[] actors = actorAppearances.keySet().toArray(new String[actorAppearances.keySet().size()]);
         if (actors.length == 0) {
             return endSessionResponse("Apparently there's not a single actor in the top movies.");
         }

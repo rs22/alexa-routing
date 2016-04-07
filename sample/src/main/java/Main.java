@@ -19,9 +19,6 @@ import routing.servlets.SampleUtterancesServlet;
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        // Configure logging to output to the console with default level of INFO
-        BasicConfigurator.configure();
-
         System.setProperty(Sdk.DISABLE_REQUEST_SIGNATURE_CHECK_SYSTEM_PROPERTY, "true");
 
         String envPort = System.getenv("PORT");

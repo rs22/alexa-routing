@@ -87,8 +87,6 @@ public class SpeechRouter {
 		RequestContextProvider contextProvider = this.injector.getInstance(RequestContextProvider.class);
 		contextProvider.setPossibleUtterance(possibleUtterance);
 		contextProvider.setIntentName(intentName);
-		RequestContext requestContext = new RequestContext(possibleUtterance, intentName);
-		controller.setRequestContext(requestContext);
 		
 		// Execute filters
 		for (Method filter : action.getFilterMethods()) {
@@ -112,6 +110,7 @@ public class SpeechRouter {
 					.invoke(controller, parameters.toArray(new Object[parameters.size()]));
 			return buildSpeechletResponse(response, intentName);
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new SpeechletException("Error executing controller action " + action.getActionMethod().getName(), e);
 		}
 	}
@@ -119,8 +118,8 @@ public class SpeechRouter {
 	private SpeechletResponse buildSpeechletResponse(AlexaResponse controllerResponse, String title) {
 		// Create the Simple card content.
         SimpleCard card = new SimpleCard();
-        card.setTitle(String.format("HelloWorldSpeechlet - %s", title));
-        card.setContent(String.format("HelloWorldSpeechlet - %s", controllerResponse.getContent()));
+        card.setTitle(String.format("Response from Alexa Skill"));
+        card.setContent(controllerResponse.getContent());
 
         // Create the plain text output.
         PlainTextOutputSpeech speech = new PlainTextOutputSpeech();
